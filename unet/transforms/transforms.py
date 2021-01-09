@@ -7,7 +7,7 @@ import torchvision.transforms as transforms
 __all__ = ['PairCompose', 'PairResize', 'PairCenterCrop', 'PairColorJitter', 'PairPad',
            'PairRandomAffine', 'PairRandomApply', 'PairRandomCrop', 'PairRandomHorizontalFlip',
            'PairRandomResizedCrop', 'PairRandomRotation', 'PairRandomVerticalFlip','PairGrayscale',
-           'PairToTensor']
+           'PairToTensor', 'PairNormalize']
 
 _pil_interpolation_to_str = {
     Image.NEAREST: 'PIL.Image.NEAREST',
@@ -189,3 +189,15 @@ class PairGrayscale(transforms.Grayscale):
         img1 = F.to_grayscale(img1, num_output_channels=self.num_output_channels)
         img2 = F.to_grayscale(img2, num_output_channels=self.num_output_channels)
         return img1, img2
+    
+    
+class PairNormalize(transforms.Normalize):
+    def __init__(self, mean, std, inplace=False):
+        super(PairNormalize, self).__init__(mean, std, inplace=inplace)
+        
+    def __call__(self, tensor1, tensor2):
+        tensor1 = F.normalize(tensor1, self.mean, self.std, inplace=self.inplace)
+        tensor2 = F.normalize(tensor2, self.mean, self.std, inplace=self.inplace)
+        
+        return tensor1, tensor2
+        
