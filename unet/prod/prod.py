@@ -13,14 +13,14 @@ from torchvision.transforms import transforms as VT
 from torchvision.transforms import functional as VF
 
 
-class Segmentation(object):
-    def __init__(self, weight=None, device='cpu'):
+class SegmentationPredictor(object):
+    def __init__(self, weight_path=None, device='cpu'):
         self.device = device
         self._load_model()
         
-        self.weight = weight
+        self.weight = weight_path
         if self.weight != None:
-            self._load_state_dict(weight)
+            self._load_state_dict(weight_path)
             
     def _load_state_dict(self, state_dict_path):
         state_dict = torch.load(state_dict_path)
@@ -36,7 +36,7 @@ class Segmentation(object):
         output = output.detach()
         return output
         
-    def predict(self, image):
+    def predict(self, image, mask_color="#ffffff"):
         if type(image) == str:
             im_path = pathlib.Path(image)
             image = PIL.Image.open(str(im_path))
@@ -51,7 +51,7 @@ class Segmentation(object):
         output = VF.to_pil_image(output)
         mask = VF.resize(output, size=(h,w))
 
-        combined = Image.new("RGBA", (w, h), "#ffffff")
+        combined = Image.new("RGBA", (w, h), mask_color)
         combined.paste(image, mask=mask)
         
         return image, mask, combined
