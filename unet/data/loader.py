@@ -3,14 +3,14 @@ from .pair import PairDataset
 import torch.utils.data as data
 
 train_tmft = PT.PairCompose([
-    PT.PairResize((256, 256)),
+    PT.PairResize((320, 320)),
     PT.PairRandomRotation(20),
     PT.PairGrayscale(),
     PT.PairToTensor(),
 ])
 
 valid_tmft = PT.PairCompose([
-    PT.PairResize((256, 256)),
+    PT.PairResize((320, 320)),
     PT.PairGrayscale(),
     PT.PairToTensor(),
 ])
